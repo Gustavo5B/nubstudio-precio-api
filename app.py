@@ -39,6 +39,17 @@ def build_features(data):
     }
     return np.array([[row[f] for f in FEATURES]])
 
+@app.route('/', methods=['GET'])
+def index():
+    return jsonify({
+        'api': 'NU★B Studio — Predictor de Precio',
+        'version': '1.0',
+        'endpoints': {
+            'GET  /health': 'Estado del servidor',
+            'POST /predecir': 'Predice el precio de una obra'
+        }
+    })
+
 @app.route('/health', methods=['GET'])
 def health():
     return jsonify({'status': 'ok'})
