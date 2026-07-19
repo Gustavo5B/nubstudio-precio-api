@@ -9,12 +9,12 @@ CORS(app)
 model   = joblib.load('modelo_regresion_lineal.pkl')
 scaler  = joblib.load('escalador.pkl')
 
-# Las 13 features seleccionadas (mismo orden que en entrenamiento)
+# Las 13 features en el MISMO orden que variables_finales en el notebook
+# (ordenadas por votos DESC, luego alfabéticamente dentro de empates)
 FEATURES = [
-    'alto_cm', 'ancho_cm', 'anio_creacion',
-    'categoria_Cerámica', 'categoria_Escultura', 'categoria_Fotografía',
-    'categoria_Ilustración', 'categoria_Pintura',
-    'con_certificado', 'disponible_envio', 'es_original',
+    'alto_cm', 'ancho_cm', 'categoria_Fotografía', 'categoria_Escultura',
+    'es_original', 'categoria_Pintura', 'categoria_Cerámica', 'anio_creacion',
+    'con_certificado', 'categoria_Ilustración', 'disponible_envio',
     'material_Papel fotográfico', 'material_Tela'
 ]
 
@@ -64,7 +64,8 @@ def predecir():
         X = build_features(data)
         X_scaled = scaler.transform(X)
         precio = float(model.predict(X_scaled)[0])
-        precio = max(350, round(precio / 50) * 50)
+        precio = round(precio / 50) * 50
+        precio = max(100, precio)  # mínimo simbólico de $100 MXN
 
         return jsonify({
             'precio_predicho': precio,
