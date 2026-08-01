@@ -1,0 +1,8 @@
+.env 
+__pycache__/ 
+*.pyc 
+modelo.docx 
+modelos.docx 
+modelos_read.zip 
+modelos_unpacked/ 
+~$modelo.docx 
