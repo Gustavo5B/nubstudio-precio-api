@@ -10,10 +10,9 @@ model  = joblib.load('modelo_regresion_lineal.pkl')
 scaler = joblib.load('escalador.pkl')
 
 FEATURES = [
-    'alto_cm', 'ancho_cm', 'peso_kg', 'es_original', 'con_certificado',
-    'categoria_Escultura', 'categoria_Pintura', 'categoria_Ilustración',
-    'categoria_Fotografía', 'material_Tabla de madera', 'material_Lienzo',
-    'tecnica_Técnica mixta'
+    'alto_cm', 'categoria_Escultura', 'categoria_Pintura', 'categoria_Ilustración',
+    'categoria_Fotografía', 'peso_kg', 'material_Tabla de madera', 'ancho_cm',
+    'tecnica_Técnica mixta', 'es_original', 'con_certificado', 'material_Lienzo'
 ]
 
 def build_features(data):
