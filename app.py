@@ -6,36 +6,34 @@ import numpy as np
 app = Flask(__name__)
 CORS(app)
 
-model   = joblib.load('modelo_regresion_lineal.pkl')
-scaler  = joblib.load('escalador.pkl')
+model  = joblib.load('modelo_regresion_lineal.pkl')
+scaler = joblib.load('escalador.pkl')
 
-# Las 13 features en el MISMO orden que variables_finales en el notebook
-# (ordenadas por votos DESC, luego alfabéticamente dentro de empates)
 FEATURES = [
-    'alto_cm', 'ancho_cm', 'categoria_Fotografía', 'categoria_Escultura',
-    'es_original', 'categoria_Pintura', 'categoria_Cerámica', 'anio_creacion',
-    'con_certificado', 'categoria_Ilustración', 'disponible_envio',
-    'material_Papel fotográfico', 'material_Tela'
+    'alto_cm', 'ancho_cm', 'peso_kg', 'es_original', 'con_certificado',
+    'categoria_Escultura', 'categoria_Pintura', 'categoria_Ilustración',
+    'categoria_Fotografía', 'material_Tabla de madera', 'material_Lienzo',
+    'tecnica_Técnica mixta'
 ]
 
 def build_features(data):
     categoria = data.get('categoria', '')
     material  = data.get('material', '')
+    tecnica   = data.get('tecnica', '')
 
     row = {
-        'alto_cm'                   : float(data.get('alto_cm', 0)),
-        'ancho_cm'                  : float(data.get('ancho_cm', 0)),
-        'anio_creacion'             : float(data.get('anio_creacion', 2020)),
-        'categoria_Cerámica'        : 1 if categoria == 'Cerámica'   else 0,
-        'categoria_Escultura'       : 1 if categoria == 'Escultura'  else 0,
-        'categoria_Fotografía'      : 1 if categoria == 'Fotografía' else 0,
-        'categoria_Ilustración'     : 1 if categoria == 'Ilustración'else 0,
-        'categoria_Pintura'         : 1 if categoria == 'Pintura'    else 0,
-        'con_certificado'           : int(data.get('con_certificado', 0)),
-        'disponible_envio'          : int(data.get('disponible_envio', 0)),
-        'es_original'               : int(data.get('es_original', 1)),
-        'material_Papel fotográfico': 1 if material == 'Papel fotográfico' else 0,
-        'material_Tela'             : 1 if material == 'Tela'              else 0,
+        'alto_cm':                float(data.get('alto_cm', 0)),
+        'ancho_cm':               float(data.get('ancho_cm', 0)),
+        'peso_kg':                float(data.get('peso_kg', 0)),
+        'es_original':            int(data.get('es_original', 1)),
+        'con_certificado':        int(data.get('con_certificado', 0)),
+        'categoria_Escultura':    1 if categoria == 'Escultura'    else 0,
+        'categoria_Pintura':      1 if categoria == 'Pintura'      else 0,
+        'categoria_Ilustración':  1 if categoria == 'Ilustración'  else 0,
+        'categoria_Fotografía':   1 if categoria == 'Fotografía'   else 0,
+        'material_Tabla de madera': 1 if material == 'Tabla de madera' else 0,
+        'material_Lienzo':        1 if material == 'Lienzo'        else 0,
+        'tecnica_Técnica mixta':  1 if tecnica == 'Técnica mixta'  else 0,
     }
     return np.array([[row[f] for f in FEATURES]])
 
@@ -43,7 +41,7 @@ def build_features(data):
 def index():
     return jsonify({
         'api': 'NU★B Studio — Predictor de Precio',
-        'version': '1.0',
+        'version': '2.0',
         'endpoints': {
             'GET  /health': 'Estado del servidor',
             'POST /predecir': 'Predice el precio de una obra'
@@ -65,7 +63,7 @@ def predecir():
         X_scaled = scaler.transform(X)
         precio = float(model.predict(X_scaled)[0])
         precio = round(precio / 50) * 50
-        precio = max(100, precio)  # mínimo simbólico de $100 MXN
+        precio = max(100, precio)
 
         return jsonify({
             'precio_predicho': precio,
